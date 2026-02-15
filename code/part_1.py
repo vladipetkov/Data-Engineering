@@ -62,7 +62,7 @@ print(df[df["artist_popularity"] > 70].sort_values(by="followers", ascending = T
 
 
 """
-Relevance of genres
+Relevance of genres Part 1
 """
 def top_10_per_genre(genre, df, plain_genre):
     if plain_genre:
@@ -88,3 +88,65 @@ def top_10_per_genre(genre, df, plain_genre):
 
 print(top_10_per_genre("pop", df, False))
 # print(df.loc[0,"genre_5"])
+
+
+"""
+Relevance of genres Part 2
+"""
+def genre_count(df):
+    genre_column=[]
+    for column in df.columns:
+        if column.startswith("genre_"):
+            genre_column.append(column)
+
+    df["numb_genres"] = 0
+    for i in range(len(df)):
+        count = 0
+        for col in genre_column:
+            value=df.loc[i, col]
+            if not pd.isna(value):
+                count+=1
+        df.loc[i,"numb_genres"] = count
+
+    basic_summary=df["numb_genres"].value_counts().sort_index()
+    descriptive_stats = df["numb_genres"].describe()
+    #“Correlation on the raw scale gets distorted. Fix: use log scale Try correlating popularity with log_followers."
+    df["log_followers"] = np.log(df["followers"])
+    corr_matrix = df[["numb_genres", "artist_popularity", "log_followers"]].corr()
+
+    #Histogram
+    plt.figure()
+    plt.hist(df["numb_genres"], range(0, int(df["numb_genres"].max()) + 1))
+    plt.xlabel("Number of Genres per Artist")
+    plt.ylabel("Number of Artists")
+    plt.title("Distribution of Number of Genres per Artist")
+    plt.show()
+
+    #Boxplot Popularity
+    plt.figure()
+    df.boxplot("artist_popularity", "numb_genres")
+    plt.xlabel("Number of Genres")
+    plt.ylabel("Artist Popularity")
+    plt.title("Popularity Distribution by Number of Genres")
+    plt.show()
+
+    #Boxplot Log Followers
+    plt.figure()
+    df.boxplot("log_followers", "numb_genres")
+    plt.xlabel("Number of Genres")
+    plt.ylabel("Log(Followers)")
+    plt.title("Log(Followers) Distribution by Number of Genres")
+    plt.show()
+
+    #Mean Popularity Line Plot
+    mean_popularity = df.groupby("numb_genres")["artist_popularity"].mean()
+    plt.figure()
+    mean_popularity.plot()
+    plt.xlabel("Number of Genres")
+    plt.ylabel("Average Popularity")
+    plt.title("Average Popularity by Number of Genres")
+    plt.show()
+
+    return basic_summary, descriptive_stats, corr_matrix
+
+print(genre_count(df))
