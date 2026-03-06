@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="075336ab-96f9-47c4-856d-d5e1d775ae22" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Evaluation of Cooperation and usage of GenAI.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../Evaluation of Cooperation and usage of GenAI.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/part_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/part_1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/spotify_database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/part_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/part_3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,6 +18,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MarkNemeth05&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/vladipetkov/Data-Engineering.git&quot;,
+    &quot;accountId&quot;: &quot;e4aa05f5-d3bc-4cd9-bbf2-6dc647d69edf&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 8
@@ -29,10 +43,11 @@
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.part_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.part_3.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mark1&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;mark&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
