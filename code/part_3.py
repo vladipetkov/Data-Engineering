@@ -1,9 +1,12 @@
 import sqlite3
+import pandas as pd
 import matplotlib.pyplot as plt
+import part_3_functions as func
 
 con = sqlite3.connect("spotify_database.db")
 cur = con.cursor()
 
+func.album_summary('Jar Of Flies',cur)
 """
 ex. 5 Are explicit tracks more popular?
 """
