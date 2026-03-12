@@ -1,0 +1,13 @@
+[theme]
+primaryColor = "#EDEED8"
+secondaryBackgroundColor = "#89A49E"
+backgroundColor = "#1A2F32"
+textColor = "#white"
+
+
+[theme.sidebar]
+primaryColor = "#1A2F32"
+backgroundColor = "#89A49E"
+
+[client]
+showSidebarNavigation = false
