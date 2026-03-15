@@ -1,0 +1,73 @@
+import sqlite3
+import pandas as pd
+from datetime import datetime
+
+con = sqlite3.connect("../spotify_database.db")
+cur = con.cursor()
+
+"""
+Did music change over time? The albums data contains the release date of the
+tracks. Investigate the trend of various features over time by taking an average
+over all songs released on a date. You may want to use the library datetime
+for this purpose.
+"""
+
+def fetch_features_over_time(cur):
+    query = """
+        SELECT 
+            albums_data.release_date,
+            AVG(features_data.danceability) AS avg_danceability,
+            AVG(features_data.energy) AS avg_energy,
+            AVG(features_data.loudness) AS avg_loudness,
+            AVG(features_data.acousticness) AS avg_acousticness,
+            AVG(features_data.speechiness) AS avg_speechiness,
+            AVG(features_data.instrumentalness) AS avg_instrumentalness,
+            AVG(features_data.liveness) AS avg_liveness,
+            AVG(features_data.valence) AS avg_valence,
+            AVG(features_data.tempo) AS avg_tempo
+        FROM albums_data
+        JOIN features_data ON albums_data.track_id = features_data.id
+        GROUP BY albums_data.release_date
+        ORDER BY albums_data.release_date DESC
+    """
+    cur.execute(query)
+    rows = cur.fetchall()
+    return pd.DataFrame(rows, columns=[x[0] for x in cur.description])
+
+def get_era(year):
+    if year < 1970:
+        return "60s"
+    elif year < 1980:
+        return "70s"
+    elif year < 1990:
+        return "80s"
+    elif year < 2000:
+        return "90s"
+    elif year < 2010:
+        return "00s"
+    elif year < 2020:
+        return "10s"
+    elif year < 2027:
+        return "20s"
+
+def assign_eras(df):
+    df["year"] = pd.to_datetime(df["release_date"], errors="coerce").dt.year
+    df["year"] = df["year"].fillna(0).astype(int)
+    df["era"] = df["year"].apply(get_era)
+    return df
+
+def average_by_era(df):
+    feature_cols = [
+        "avg_danceability", "avg_energy", "avg_loudness", "avg_speechiness", "avg_acousticness",
+        "avg_instrumentalness", "avg_liveness", "avg_valence", "avg_tempo" ]
+    era_order = ["60s", "70s", "80s", "90s", "00s", "10s", "20s"]
+    df_era = df.groupby("era")[feature_cols].mean().reindex(era_order)
+    return df_era
+
+df_raw = fetch_features_over_time(cur)
+df_with_eras = assign_eras(df_raw)
+df_era_avg = average_by_era(df_with_eras)
+
+print(df_era_avg)
+
+con.close()
