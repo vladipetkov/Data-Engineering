@@ -10,3 +10,5 @@ pathlib
 plotly
 io
 pulp
+matplotlib
+seaborn
