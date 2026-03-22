@@ -9,6 +9,25 @@ import calendar
 st.set_page_config(page_title="Album Lookup", layout="wide")
 st.logo("supporting/logo.png", size = "large")
 
+with st.sidebar:
+    selectbox_option = st.sidebar.selectbox(
+    "Looking for something specific?",
+    ("Look up an Artist", "Look up an Album or a Track"),
+    index = None,
+    placeholder="Look up..."
+    )
+
+    if selectbox_option == "Look up an Artist":
+        st.switch_page("pages/1_artist_page.py")
+    elif selectbox_option == "Look up an Album or a Track":
+        st.switch_page("pages/2_album_page.py")
+
+    st.space(500)
+
+    if st.sidebar.button("Business Tab"):
+        st.session_state["play_event_planning_intro"] = True
+        st.switch_page("pages/4_event_planning.py")
+
 conn = get_connection()
 cursor = conn.cursor()
 
@@ -212,7 +231,7 @@ def display_data(album_id, track_id):
 
         col18, col19 = st.columns([1,2])
         with col18:
-            st.space("xsmall")
+            st.space(4)
             st.image(return_latest_album_picture(album_data[1], album_data[0]).replace("100x100","400x400"))
             st.header("FEATURES")
             st.metric("Track Key", value = track_data[10], format = "localized", border = True )
@@ -233,10 +252,10 @@ def display_data(album_id, track_id):
 
             col20, col21 = st.columns(2)
             with col20:
-                st.space("medium")
+                st.space(16)
                 st.metric(f"Song Length", value = f"{int(track_data[13]//60)}min {int(track_data[13]%60)} sec", border = False )
             with col21:
-                st.space("medium")
+                st.space(16)
                 featured_artists = []
                 for artist in track_data[3:10]:
                     if artist != "" and artist != track_data[3]:
@@ -263,13 +282,13 @@ def display_data(album_id, track_id):
     if album_data[4] == 1:
         track_id = album_data[7] #update just in case
 
-        track_data = return_tracks_data(track_id, False, None)
+        track_data = return_tracks_data(track_id, False)
         display_track(track_data)
     else:
         #ALBUM
         col4, col5 = st.columns([1,2])
         with col4:
-            st.space("xsmall")
+            st.space(4)
             st.image(return_latest_album_picture(album_data[1], album_data[0]).replace("100x100","400x400"))
         
         with col5:
@@ -324,7 +343,7 @@ def display_data(album_id, track_id):
         col13, col14 = st.columns([1,2])
         with col13:
             st.header("This Album Includes")
-            st.space("xxsmall")
+            st.space(2)
             st.metric(label="in total", value = f"{len(performers)} Featured Artist(s)", border = True)
         with col14:  
             st.space(70)
@@ -373,7 +392,7 @@ def display_data(album_id, track_id):
         album_fetures_extra = cursor.fetchone()
         
         with col12:
-            st.space("large")
+            st.space(30)
             st.metric("Album Key", value = album_fetures_extra[0],  delta = f"{round(album_fetures_extra[0]-average_features_extra[0], 1)} vs average", format = "localized", border = True )
         
             st.metric("Album Loudness", value = f"{round(album_fetures_extra[1], 2)} Db",  delta = f"{round(album_fetures_extra[1]-average_features_extra[1], 2)} Db quiter vs average", format = "localized", border = True )
@@ -381,7 +400,7 @@ def display_data(album_id, track_id):
             st.metric("Album Tempo", value = f"{round(album_fetures_extra[2], 1)} BPM ",  delta = f"{round(album_fetures_extra[2]-average_features_extra[2], 1)} BPM vs average", format = "localized", border = True )
 
         #TRACKS
-        st.space("xsmall")
+        st.space(4)
         track_number = None
         def change_track_number():
             if len(st.session_state["tracks_df"]["selection"]["cells"]) == 0:
@@ -395,7 +414,7 @@ def display_data(album_id, track_id):
         st.header("TRACKS")
         col16, col17 = st.columns(2)
         with col16:
-            st.space("xxsmall")
+            st.space(2)
             st.markdown("Please, select a track from the Tracklist to display information.")
             tracks_df = pd.read_sql_query(f"select a.track_number as 'Track Number', a.track_name as 'Track Name', b.track_popularity as 'Track Popularity' from albums_data a join tracks_data b on a.track_id = b.id where album_id = '{album_id}' order by track_number asc;", conn, index_col= ['Track Number'])
             st.dataframe(tracks_df['Track Name'],  on_select=change_track_number, selection_mode = "single-cell", key = "tracks_df")
@@ -406,7 +425,7 @@ def display_data(album_id, track_id):
                 st.dataframe(tracks_df.sort_values(by='Track Popularity', ascending= False)['Track Name'], hide_index= True)
             
         if track_id:
-            track_data = return_tracks_data(track_id, False, None)
+            track_data = return_tracks_data(track_id, False)
             display_track(track_data)
         else:
             track_data = return_tracks_data(None, True)
@@ -432,6 +451,7 @@ try:
     if "tracks_df" not in st.session_state:
         st.session_state["tracks_df"] = None
 
+<<<<<<< Updated upstream
     col4, col5, col6, col7 = st.columns([3,3,3,1])
     with col4:
         album_name_input = st.text_input("Album")
@@ -446,6 +466,22 @@ try:
                 st.session_state.album_name = album_name_input
             elif album_name_input == "":
                 st.session_state.album_name = ""
+=======
+col4, col5, col6, col7 = st.columns([3,3,3,1])
+with col4:
+    album_name_input = st.text_input("Album")
+with col5:
+    artist_name_album_search_input = st.text_input("Artist")
+with col6:
+    track_name_input = st.text_input("Track")
+with col7:
+    st.space(8)
+    if st.button("Search", width = "stretch"):
+        if album_name_input != "":
+            st.session_state.album_name = album_name_input
+        elif album_name_input == "":
+            st.session_state.album_name = ""
+>>>>>>> Stashed changes
 
             if artist_name_album_search_input != "":
                 st.session_state.artist_name_album_search = artist_name_album_search_input
