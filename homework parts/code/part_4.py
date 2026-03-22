@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 
-con = sqlite3.connect("../spotify_database.db")
+con = sqlite3.connect("spotify_database.db")
 cur = con.cursor()
 
 """

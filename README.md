@@ -1,24 +1,67 @@
-# Data Engineering
-# mainpage
--Genre keywords
-All genres grouped under 'main' genres. These main genres are selectable in the genre filter in the sidebar. The selection is then run through the where_selected_genres to make a reusable where clause.
+# Data Engineering Project
+This repository contains a dashboard for a spotify database and some additional code for general data insight and wrangling techniques.
+
+## Homework Parts folder
+- part_1.py provides a short analysis of the linear relationship between artist followers and popularit and an analysis of the distribution of genres
+- part_3.py (partially uses part_3_functions.py)
+    - makes an analysis of an albums features
+    - evaluates relationship between track popularity and explicitness
+    - code for converting very speciffic genres into broader genres
+- part_4.py evaluates the average features of the songs by decade
 
 
-functions:
--where_selected_genres
-takes the list of genre keywords from the genre filter and returns a where clause that can be used in all sql queries in the rest of the code, using {where} in the query and a list of parameters for the query.
+# Spotify Dashboard
 
--get_kpis
-Uses queries to get dashboard statistics: Total number of artists, Average followers, Average artist popularity, Average track popularity.
+# Sidebar features
+The sidebar acts as an easy to navigate menu for switching between looking something up, to the main statistics, to the business tab
+- Genre Filtering: Toggle filtering on/off and select specific genres to update the dashboard
+- Lookup: type in an Artist, Album or Track to learn more
+- Business Tab: Navigates to the Festival tab
 
--top_artists_popularity, followers, album popularity
-Returns dataframe with top 100 statistics.
+# Main page
+This page contains an overview of various statistics relating to genre trends, top artists and number of releases
+- Main Statistics: total artists, average followers, average artist popularity, and average track popularity
+- Top data tables: to view most popular/followed artists and most popular albums (such as "1989" by Taylor Swift)
+- Album Releases Heatmap: shows album release concentration across time
+- Album releases by month in 2023
+- Genre distribution (pie chart)
+- Song duration by decade (boxplot)
+- Genre popularity over time (line graph)
 
--heatmap
-Uses data to retrieve all releases in 2023. This is then later counted per day and entered into a seaborn heatmap.
+# Lookup
+## Artist Lookup
+- Search: search for any artist by name and choose from a grid of artists
+- Profile: view the artists global ranking, total followers, primary genres and the popularity score of their most recent album
+- Discography performance: a table of albums and compilations, and track the artists release popularity over time (line chart)
+- Averages: see the artists total number of releases, average album length, and average popularity score
+- Track Analysis: a ranked list of the artists individual tracks, their overall track count and average song length
+- Audio Profile: compare the acoustic profiles (danceability, energy, valence etc.) of the artists top three tracks using a dedicated chart
 
--track_duration
-Retrieves track duration grouped by decade. Then stored in a dataframe to use for a boxplot comparison.
+## Album Lookup
+- Search: use input fields to search for albums, artists, or individual tracks to pull up relevant data
+- Overview: view album cover art, release date, label, and its global popularity ranking
+- Comparative metrics: compare the albums overall popularity, total duration, and track count against the artists historical averages
+- Album Features: a line chart of the albums average audio features (danceability, energy, valence etc.) and key, loudness, and tempo metrics
+- Tracklist and Leaderboard: A chronological tracklist next to a leaderboard ranking the songs by popularity
 
--get_genre_popularity
-Filters by selected years, takes average track popularity per year and groupes into broad genres for plotting.
+## Track Lookup
+- Track Analysis: view global ranking, length, and featured artists
+- Track Feature Comparison: select multiple tracks from an album to graph and compare their profiles
+
+# Festival Optimizer
+## How to Use:
+Use the sidebar to select the number of stages, number of festival days and what genres and budget should each stage have.
+Click "Run Optimization" to calculate a potential festival lineup and view its statistics.
+
+## Key Features
+- Main Results: Total Cost, Total Appeal, Number of artists
+- Stage metrics: Budget summaries, Appeal chart, Genre Distribution, participating artists relevance (song release dates)
+- Worst-Best comparison: you can compare the best solutions metrics to the worst
+- Lineup: The algorythm provides the optimal lineup for maximising appeal
+
+
+
+## Requirements: 
+streamlit, requests, sqlite3, db, pandas, difflib, calendar, base64, pathlib, plotly, io, pulp
+
+Disclaimer: The dashboard Festival Page uses a stylized version (with AI). The original is still present under the "original festival optimization files" folder.
