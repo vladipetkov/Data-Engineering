@@ -6,7 +6,7 @@ import pandas as pd
 from difflib import SequenceMatcher
 from pathlib import Path
 
-logo_path = Path(__file__).parent / "supporting" / "logo.png"
+logo_path = Path(__file__).parent.parent / "supporting" / "logo.png"
 st.set_page_config(page_title="Artist Lookup", layout="wide")
 st.logo(logo_path, size = "large")
 
