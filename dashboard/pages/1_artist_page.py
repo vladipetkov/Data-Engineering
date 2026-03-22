@@ -18,7 +18,7 @@ with st.sidebar:
     placeholder="Look up..."
     )
     
-    1_artist_page_path = Path(__file__).parent / "pages" / "1_artist_page.png"
+    1_artist_page_path = Path(__file__).parent / "pages" / "1_artist_page.py"
     2_album_page_path = Path(__file__).parent / "pages" / "2_album_page.py"
     if selectbox_option == "Look up an Artist":
         st.switch_page("pages/1_artist_page.py")
