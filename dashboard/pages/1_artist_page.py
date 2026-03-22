@@ -23,34 +23,12 @@ with st.sidebar:
 
     st.space(500)
 
-    if st.sidebar.button("Business Tab"):
+    if st.sidebar.button("Business Tab", type = "primary", width = "stretch"):
         st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
-
 
 conn = get_connection()
 cursor = conn.cursor()
-
-with st.sidebar:
-    use_genre_filter = st.toggle("Filter dashboard on genre")
-
-
-    selectbox_option = st.sidebar.selectbox(
-    "Looking for something specific?",
-    ("Look up an Artist", "Look up an Album or a Track"),
-    index = None,
-    placeholder="Look up..."
-    )
-    if selectbox_option == "Look up an Artist":
-        st.switch_page("pages/1_artist_page.py")
-    elif selectbox_option == "Look up an Album or a Track":
-        st.switch_page("pages/2_album_page.py")
-
-    st.space("stretch")
-
-    if st.sidebar.button("Business Tab"):
-        st.session_state["play_event_planning_intro"] = True
-        st.switch_page("pages/4_event_planning.py")
 
 def get_artist_initial_data(artist, is_artist_name):
     if is_artist_name:

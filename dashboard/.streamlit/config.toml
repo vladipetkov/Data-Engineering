@@ -1,9 +1,9 @@
 [theme]
-primaryColor = "#EDEED8"
-secondaryBackgroundColor = "#89A49E"
+primaryColor = "#1A2F32"
 backgroundColor = "#1A2F32"
-textColor = "#EDEED8"
-
+secondaryBackgroundColor = "#89A49E"
+textColor = "#f7f7f7"
+dataframeHeaderBackgroundColor = "#89A49E"
 
 [theme.sidebar]
 primaryColor = "#1A2F32"

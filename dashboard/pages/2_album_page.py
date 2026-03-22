@@ -24,38 +24,12 @@ with st.sidebar:
 
     st.space(500)
 
-    if st.sidebar.button("Business Tab"):
+    if st.sidebar.button("Business Tab" , type = "primary", width = "stretch"):
         st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
 
 conn = get_connection()
 cursor = conn.cursor()
-
-with st.sidebar:
-    use_genre_filter = st.toggle("Filter dashboard on genre")
-
-    if not use_genre_filter:
-        selection = []
-        st.sidebar.caption("Showing all genres")
-
-    st.space("small")
-
-    selectbox_option = st.sidebar.selectbox(
-    "Looking for something specific?",
-    ("Look up an Artist", "Look up an Album or a Track"),
-    index = None,
-    placeholder="Look up..."
-    )
-    if selectbox_option == "Look up an Artist":
-        st.switch_page("pages/1_artist_page.py")
-    elif selectbox_option == "Look up an Album or a Track":
-        st.switch_page("pages/2_album_page.py")
-
-    st.space("stretch")
-
-    if st.sidebar.button("Business Tab"):
-        st.session_state["play_event_planning_intro"] = True
-        st.switch_page("pages/4_event_planning.py")
 
 def similar_names_search(item, similarity_score):
     df = pd.read_sql_query("select distinct a.album_id, a.album_name, b.name from albums_data a join artist_data b on b.id = a.artist_id;", conn, index_col= ['album_id'])
@@ -215,15 +189,16 @@ def display_data(album_id, track_id):
 
     def return_tracks_data(track_id_, is_track_number):
         if is_track_number:
-            cursor.execute(f"select a.track_number, a.track_name, a.track_id, a.artist_0, a.artist_1, a.artist_2, a.artist_3, a.artist_4, a.artist_5, a.artist_6, c.key, c.loudness, c.tempo, a.duration_sec from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id  where album_id = '{album_id}' order by track_number asc limit 1;")
+            cursor.execute(f"select a.track_number, a.track_name, a.track_id, a.artist_0, a.artist_1, a.artist_2, a.artist_3, a.artist_4, a.artist_5, a.artist_6, c.key, c.loudness, c.tempo, a.duration_sec, a.artist_id from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id  where album_id = '{album_id}' order by track_number asc limit 1;")
             return cursor.fetchone()
         else:
-            cursor.execute(f"select a.track_number, a.track_name, a.track_id, a.artist_0, a.artist_1, a.artist_2, a.artist_3, a.artist_4, a.artist_5, a.artist_6, c.key, c.loudness, c.tempo, a.duration_sec from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id  where track_id = '{track_id_}' order by track_number asc;")
+            cursor.execute(f"select a.track_number, a.track_name, a.track_id, a.artist_0, a.artist_1, a.artist_2, a.artist_3, a.artist_4, a.artist_5, a.artist_6, c.key, c.loudness, c.tempo, a.duration_sec, a.artist_id from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id  where track_id = '{track_id_}' order by track_number asc;")
             return cursor.fetchone()
     
     def display_track(track_data):
         track_id = track_data[2]
         track_name = track_data[1]
+        artist_id = track_data[14]
 
         average_features_extra_query = f"select avg(c.key), avg(c.loudness), avg(c.tempo) from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id where artist_id = '{artist_id}';"
         cursor.execute(average_features_extra_query)
@@ -234,9 +209,10 @@ def display_data(album_id, track_id):
             st.space(4)
             st.image(return_latest_album_picture(album_data[1], album_data[0]).replace("100x100","400x400"))
             st.header("FEATURES")
-            st.metric("Track Key", value = track_data[10], format = "localized", border = True )
-            st.metric("Track Loudness", value = f"{round(track_data[11], 2)} Db", format = "localized", border = True )
-            st.metric("Track Tempo", value = f"{round(track_data[12], 1)} BPM ", format = "localized", border = True )
+
+            st.metric("Track Key", value = track_data[10], delta = f"{round(track_data[10]-average_features_extra[0], 1)} vs Average Artist Track" ,format = "localized", border = True )
+            st.metric("Track Loudness", value = f"{round(track_data[11], 2)} Db", delta = f"{round(track_data[11]-average_features_extra[1], 1)} vs Average Artist Track" , format = "localized", border = True )
+            st.metric("Track Tempo", value = f"{round(track_data[12], 1)} BPM ", delta = f"{round(track_data[12]-average_features_extra[2], 1)} vs Average Artist Track" , format = "localized", border = True )
         
         with col19:
             
@@ -381,9 +357,8 @@ def display_data(album_id, track_id):
             filtered_df = album_features_df[album_features_df["Album Name"].isin(selected_rows)]
             st.line_chart(filtered_df.drop(columns=["Album Name"]).transpose())
         
-        average_features_extra_query = f"select avg(c.key), avg(c.loudness), avg(c.tempo) from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id where artist_id = '{artist_id}' and (album_type = 'album' or album_type = 'compilation');"
+        average_features_extra_query = f"select avg(avg_key), avg(avg_loudness), avg(avg_tempo) from (select a.album_name, avg(c.key) as avg_key, avg(c.loudness) as avg_loudness, avg(c.tempo) as avg_tempo from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id where artist_id = '{artist_id}' and (album_type = 'album' or album_type = 'compilation') group by a.album_id);"
         
-        #correct? review = select avg(avg_key), avg(avg_loudness), avg(avg_tempo) from (select a.album_name, avg(c.key) as avg_key, avg(c.loudness) as avg_loudness, avg(c.tempo) as avg_tempo from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id where artist_id = '06HL4z0CvFAxyc27GXpf02' and (album_type = 'album' or album_type = 'compilation') group by a.album_id);
         cursor.execute(average_features_extra_query)
         average_features_extra = cursor.fetchone()
 
@@ -393,11 +368,11 @@ def display_data(album_id, track_id):
         
         with col12:
             st.space(30)
-            st.metric("Album Key", value = album_fetures_extra[0],  delta = f"{round(album_fetures_extra[0]-average_features_extra[0], 1)} vs average", format = "localized", border = True )
+            st.metric("Album Key", value = album_fetures_extra[0],  delta = f"{round(album_fetures_extra[0]-average_features_extra[0], 1)} vs Average Artist Album", format = "localized", border = True )
         
-            st.metric("Album Loudness", value = f"{round(album_fetures_extra[1], 2)} Db",  delta = f"{round(album_fetures_extra[1]-average_features_extra[1], 2)} Db quiter vs average", format = "localized", border = True )
+            st.metric("Album Loudness", value = f"{round(album_fetures_extra[1], 2)} Db",  delta = f"{round(album_fetures_extra[1]-average_features_extra[1], 2)} Db quiter vs Average Artist Album", format = "localized", border = True )
         
-            st.metric("Album Tempo", value = f"{round(album_fetures_extra[2], 1)} BPM ",  delta = f"{round(album_fetures_extra[2]-average_features_extra[2], 1)} BPM vs average", format = "localized", border = True )
+            st.metric("Album Tempo", value = f"{round(album_fetures_extra[2], 1)} BPM ",  delta = f"{round(album_fetures_extra[2]-average_features_extra[2], 1)} BPM vs Average Artist Album", format = "localized", border = True )
 
         #TRACKS
         st.space(4)
@@ -432,41 +407,25 @@ def display_data(album_id, track_id):
             display_track(track_data)
 
        
-try:
-    if "album_name" not in st.session_state:
-        st.session_state.album_name = ""
 
-    if "artist_name_album_search" not in st.session_state:
-        st.session_state.artist_name_album_search = ""
+if "album_name" not in st.session_state:
+    st.session_state.album_name = ""
 
-    if "track_name" not in st.session_state:
-        st.session_state.track_name = ""
+if "artist_name_album_search" not in st.session_state:
+    st.session_state.artist_name_album_search = ""
 
-    if "album_id" not in st.session_state:
-        st.session_state.album_id = ""
+if "track_name" not in st.session_state:
+    st.session_state.track_name = ""
 
-    if "track_id" not in st.session_state:
-        st.session_state.track_id = ""
+if "album_id" not in st.session_state:
+    st.session_state.album_id = ""
 
-    if "tracks_df" not in st.session_state:
-        st.session_state["tracks_df"] = None
+if "track_id" not in st.session_state:
+    st.session_state.track_id = ""
 
-<<<<<<< Updated upstream
-    col4, col5, col6, col7 = st.columns([3,3,3,1])
-    with col4:
-        album_name_input = st.text_input("Album")
-    with col5:
-        artist_name_album_search_input = st.text_input("Artist")
-    with col6:
-        track_name_input = st.text_input("Track")
-    with col7:
-        st.space("small")
-        if st.button("Search", width = "stretch"):
-            if album_name_input != "":
-                st.session_state.album_name = album_name_input
-            elif album_name_input == "":
-                st.session_state.album_name = ""
-=======
+if "tracks_df" not in st.session_state:
+    st.session_state["tracks_df"] = None
+
 col4, col5, col6, col7 = st.columns([3,3,3,1])
 with col4:
     album_name_input = st.text_input("Album")
@@ -475,29 +434,26 @@ with col5:
 with col6:
     track_name_input = st.text_input("Track")
 with col7:
-    st.space(8)
+    st.space("small")
     if st.button("Search", width = "stretch"):
         if album_name_input != "":
             st.session_state.album_name = album_name_input
         elif album_name_input == "":
             st.session_state.album_name = ""
->>>>>>> Stashed changes
 
-            if artist_name_album_search_input != "":
-                st.session_state.artist_name_album_search = artist_name_album_search_input
-            elif artist_name_album_search_input == "":
-                st.session_state.artist_name_album_search = ""
+        if artist_name_album_search_input != "":
+            st.session_state.artist_name_album_search = artist_name_album_search_input
+        elif artist_name_album_search_input == "":
+            st.session_state.artist_name_album_search = ""
 
-            if track_name_input != "":
-                st.session_state.track_name = track_name_input
-            elif track_name_input == "":
-                st.session_state.track_name = ""
+        if track_name_input != "":
+            st.session_state.track_name = track_name_input
+        elif track_name_input == "":
+            st.session_state.track_name = ""
 
-            st.rerun()
+        st.rerun()
 
-    if st.session_state.album_name or st.session_state.artist_name_album_search or st.session_state.track_name:
-        search_engine(st.session_state.album_name, st.session_state.artist_name_album_search, st.session_state.track_name)
-    elif st.session_state.album_id:
-        display_data(st.session_state.album_id, st.session_state.track_id)
-except:
-    st.error("There seems to be an unexpected error!")
+if st.session_state.album_name or st.session_state.artist_name_album_search or st.session_state.track_name:
+    search_engine(st.session_state.album_name, st.session_state.artist_name_album_search, st.session_state.track_name)
+elif st.session_state.album_id:
+    display_data(st.session_state.album_id, st.session_state.track_id)

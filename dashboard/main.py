@@ -94,7 +94,7 @@ with st.sidebar:
 
     st.space(400)
 
-    if st.sidebar.button("Business Tab"):
+    if st.sidebar.button("Business Tab", type = "primary", width = "stretch"):
         st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
 
