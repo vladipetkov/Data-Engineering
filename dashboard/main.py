@@ -6,8 +6,10 @@ import seaborn as sns
 from db import get_connection
 from genre_mapper import map_broad_genres
 from genre_mapper import GENRE_KEYWORDS as GK, BROAD_GENRES as BROAD_GENRE_LIST
- 
-st.logo("supporting/logo.png", size = "large")
+from pathlib import Path
+
+logo_path = Path(__file__).parent / "supporting" / "logo.png"
+st.logo(logo_path, size = "large")
 st.set_page_config(page_title="Spotify Dashboard", layout="wide")
 
 GENRE_KEYWORDS = {
@@ -87,16 +89,18 @@ with st.sidebar:
     placeholder="Look up..."
     )
 
+    artist_file_path = Path(__file__).parent / "pages" / "1_artist_page.py"
+    albums_file_path = Path(__file__).parent / "pages" / "2_album_page.py"
     if selectbox_option == "Look up an Artist":
-        st.switch_page("pages/1_artist_page.py")
+        st.switch_page(artist_file_path)
     elif selectbox_option == "Look up an Album or a Track":
-        st.switch_page("pages/2_album_page.py")
+        st.switch_page(albums_file_path)
 
     st.space(400)
-
+    business_tab_file_path = Path(__file__).parent / "pages" / "4_event_planning.py"
     if st.sidebar.button("Business Tab", type = "primary", width = "stretch"):
         st.session_state["play_event_planning_intro"] = True
-        st.switch_page("pages/4_event_planning.py")
+        st.switch_page(business_tab_file_path)
 
 if not use_genre_filter or not selection:
     keywords = []
