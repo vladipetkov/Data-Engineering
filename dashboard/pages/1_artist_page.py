@@ -7,8 +7,6 @@ from difflib import SequenceMatcher
 
 st.set_page_config(page_title="Artist Lookup", layout="wide")
 st.logo("supporting/logo.png", size = "large")
-<<<<<<< Updated upstream
-=======
 
 with st.sidebar:
     selectbox_option = st.sidebar.selectbox(
@@ -28,7 +26,7 @@ with st.sidebar:
     if st.sidebar.button("Business Tab"):
         st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
->>>>>>> Stashed changes
+
 
 conn = get_connection()
 cursor = conn.cursor()
