@@ -7,6 +7,28 @@ from difflib import SequenceMatcher
 
 st.set_page_config(page_title="Artist Lookup", layout="wide")
 st.logo("supporting/logo.png", size = "large")
+<<<<<<< Updated upstream
+=======
+
+with st.sidebar:
+    selectbox_option = st.sidebar.selectbox(
+    "Looking for something specific?",
+    ("Look up an Artist", "Look up an Album or a Track"),
+    index = None,
+    placeholder="Look up..."
+    )
+
+    if selectbox_option == "Look up an Artist":
+        st.switch_page("pages/1_artist_page.py")
+    elif selectbox_option == "Look up an Album or a Track":
+        st.switch_page("pages/2_album_page.py")
+
+    st.space(500)
+
+    if st.sidebar.button("Business Tab"):
+        st.session_state["play_event_planning_intro"] = True
+        st.switch_page("pages/4_event_planning.py")
+>>>>>>> Stashed changes
 
 conn = get_connection()
 cursor = conn.cursor()
@@ -135,7 +157,7 @@ def display_data(artist_id):
 
     col3, col4 = st.columns([1,2])
     with col3:
-        st.space("xsmall")
+        st.space(4)
         st.image(return_latest_album_picture(data[1]).replace("100x100","320x320"))
 
     query = f"with sorted_artist_popularity as (select ROW_NUMBER() over (order by artist_popularity desc) as position, id, artist_popularity from artist_data) select position from sorted_artist_popularity where id = '{artist_id}';"
@@ -178,7 +200,7 @@ def display_data(artist_id):
                 cursor.execute(query)
                 latest_album = cursor.fetchone()
 
-                st.space("xxsmall")
+                st.space(2)
                 st.subheader("Latest Album Popularity")
                 # st.text(latest_album)
                 # st.text(latest_album[1])
@@ -234,9 +256,9 @@ def display_data(artist_id):
             with col9:
                 df_album_pop_2 = pd.read_sql_query(f"select Year, avg(album_popularity) as Popularity from (select album_name, substring(release_date,1,4) as Year, album_popularity from albums_data where artist_id = '{artist_id}' and album_type = '{album_type}' collate nocase group by album_name) group by year order by year asc;", conn, index_col= ['Year'])
                 if len(df_album_pop_2) > 1:  
-                    st.space("xxsmall")
+                    st.space(2)
                     st.subheader(f"{selection[0]} Popularity")
-                    st.space("xsmall")
+                    st.space(4)
                     st.line_chart(df_album_pop_2, y_label = f'{selection[0]} Popularity', height = 'stretch')
             col17,col18,col19 = st.columns(3)
             cursor.execute(f"select avg(album_popularity), count(*), avg(album_length) from (select album_name, album_popularity, sum(duration_sec) as album_length from albums_data where artist_id = '{artist_id}' and album_type = '{album_type}' collate nocase group by album_name);")
@@ -272,9 +294,9 @@ def display_data(artist_id):
             with col9:
                 df_album_pop_2 = pd.read_sql_query(f"select Year, avg(album_popularity) as Popularity from (select album_name, substring(release_date,1,4) as Year, album_popularity from albums_data where artist_id = '{artist_id}' and (album_type = '{album_type_1}' collate nocase or album_type = '{album_type_2}' collate nocase) group by album_name) group by year order by year asc;", conn, index_col= ['Year'])
                 if len(df_album_pop_2) > 1:
-                    st.space("xxsmall")
+                    st.space(2)
                     st.subheader(f"{both} Popularity")
-                    st.space("xsmall")
+                    st.space(4)
                     st.line_chart(df_album_pop_2, y_label = f'{both} Popularity', height = 'stretch')
 
             col17,col18,col19 = st.columns(3)
@@ -320,7 +342,7 @@ def display_data(artist_id):
     with col14:
         st.subheader("Top 3 Tracks Characteristics")
         df_tracks_specs = pd.read_sql_query(f"select a.track_name as 'Track Name', c.danceability as 'Danceability', c.energy as 'Energy', c.liveness as 'Liveness', c.valence as 'Valence', c.speechiness as 'Speechiness', c.acousticness as 'Acousticness', c.instrumentalness from albums_data a join tracks_data b on a.track_id = b.id join features_data c on b.id = c.id where artist_id = '{artist_id}' order by b.track_popularity desc limit 3;", conn, index_col=['Track Name']).transpose()
-        st.space("xsmall")
+        st.space(4)
         st.line_chart(df_tracks_specs)
 
 try:
@@ -333,7 +355,7 @@ try:
     with col24:
         artist_name_input = st.text_input("Enter Artist")
     with col25:
-        st.space("small")
+        st.space(8)
         if st.button("Search", width = "stretch"):
             st.session_state.artist_name = artist_name_input
             st.session_state.artist_id = ""

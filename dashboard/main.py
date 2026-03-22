@@ -78,7 +78,7 @@ with st.sidebar:
         selection = []
         st.sidebar.caption("Showing all genres")
 
-    st.space("small")
+    st.space(8)
 
     selectbox_option = st.sidebar.selectbox(
     "Looking for something specific?",
@@ -87,7 +87,12 @@ with st.sidebar:
     placeholder="Look up..."
     )
 
-    st.space("stretch")
+    if selectbox_option == "Look up an Artist":
+        st.switch_page("pages/1_artist_page.py")
+    elif selectbox_option == "Look up an Album or a Track":
+        st.switch_page("pages/2_album_page.py")
+
+    st.space(400)
 
     if st.sidebar.button("Business Tab"):
         st.session_state["play_event_planning_intro"] = True
@@ -98,11 +103,14 @@ if not use_genre_filter or not selection:
 else:
     keywords = [kw for genre in selection for kw in GENRE_KEYWORDS[genre]]
 
+<<<<<<< Updated upstream
 if selectbox_option == "Look up an Artist":
     st.switch_page("pages/1_artist_page.py")
 elif selectbox_option == "Look up an Album or a Track":
     st.switch_page("pages/2_album_page.py")
 
+=======
+>>>>>>> Stashed changes
 # Genre title
 if not use_genre_filter or not selection: 
     st.title(f"General")
@@ -112,8 +120,6 @@ elif len(selection) == 1:
 
 else:
     st.title(f"{len(selection)} Genres selected") 
-
-cur = get_connection().cursor()
 
 #creates a where clause from the keywords from the genre filter
 def where_selected_genres(keywords):
@@ -132,7 +138,7 @@ def where_selected_genres(keywords):
 
 def get_kpis(keywords):
     where, params = where_selected_genres(keywords)  
-    cur.execute(f"""                             
+    cursor.execute(f"""                             
         SELECT 
             COUNT(DISTINCT a.id) AS total_artists,
             AVG(a.followers) AS avg_fol,
@@ -142,13 +148,13 @@ def get_kpis(keywords):
         JOIN albums_data al ON al.artist_id = a.id
         JOIN tracks_data t ON t.id = al.track_id
         {where}""", params) 
-    rows = cur.fetchall()
-    return pd.DataFrame(rows, columns=[x[0] for x in cur.description])
+    rows = cursor.fetchall()
+    return pd.DataFrame(rows, columns=[x[0] for x in cursor.description])
 
 
 def top_artists_popularity(keywords):
     where, params = where_selected_genres(keywords)
-    cur.execute(f"""
+    cursor.execute(f"""
         SELECT DISTINCT a.name, a.artist_popularity
         FROM artist_data a
         JOIN albums_data al ON al.artist_id = a.id
@@ -157,13 +163,13 @@ def top_artists_popularity(keywords):
         ORDER BY a.artist_popularity DESC
         LIMIT 100""",params)
     
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
     return pd.DataFrame(rows, columns=["Artist", "Popularity"])
 
 
 def top_artists_followers(keywords):
     where, params = where_selected_genres(keywords)
-    cur.execute(f"""
+    cursor.execute(f"""
         SELECT DISTINCT a.name, a.followers
         FROM artist_data a
         JOIN albums_data al ON al.artist_id = a.id
@@ -171,12 +177,12 @@ def top_artists_followers(keywords):
         {where}
         ORDER BY a.followers DESC
         LIMIT 100""", params)
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
     return pd.DataFrame(rows, columns=["Artist", "Followers"])    
 
 def top_albums_popularity(keywords):
     where, params = where_selected_genres(keywords)
-    cur.execute(f"""
+    cursor.execute(f"""
         SELECT DISTINCT al.album_name, a.name AS artist, al.album_popularity
         FROM artist_data a
         JOIN albums_data al ON al.artist_id = a.id
@@ -185,14 +191,13 @@ def top_albums_popularity(keywords):
         ORDER BY al.album_popularity DESC
         LIMIT 100""", params)      
      
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
     return pd.DataFrame(rows, columns=["Album", "Artist", "Popularity"])
 
 def heatmap(keywords):
     where, params = where_selected_genres(keywords)
-    cur = get_connection().cursor()
     where_2023 = f"{'AND' if where else 'WHERE'} al.release_date LIKE '2023%'"
-    cur.execute(f"""
+    cursor.execute(f"""
         SELECT DISTINCT al.album_name, al.release_date
         FROM artist_data a
         JOIN albums_data al ON al.artist_id = a.id
@@ -200,13 +205,12 @@ def heatmap(keywords):
         {where}
         {where_2023}""", params)
     
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
     return pd.DataFrame(rows, columns=["Album", "release_date"])
     
 def track_duration(keywords):
     where, params = where_selected_genres(keywords)
-    cur = get_connection().cursor()
-    cur.execute(f"""
+    cursor.execute(f"""
         SELECT 
             f.duration_ms,
             CASE
@@ -221,15 +225,14 @@ def track_duration(keywords):
         JOIN features_data f ON f.id = t.id
         {where}""", params)      
     
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
     return pd.DataFrame(rows, columns=["duration_ms", "decade"])
 
 def get_genre_popularity(keywords, year_start, year_end):
     where, params = where_selected_genres(keywords)
     year_clause = f"{'AND' if where else 'WHERE'} CAST(SUBSTR(al.release_date, 1, 4) AS INTEGER) BETWEEN ? AND ?"
-    cur = get_connection().cursor()
     genre_cols = [f"genre_{i}" for i in range(7)]
-    cur.execute(f"""
+    cursor.execute(f"""
         SELECT
             CAST(SUBSTR(al.release_date, 1, 4) AS INTEGER) AS year,
             {", ".join([f"a.{c}" for c in genre_cols])},
@@ -241,7 +244,7 @@ def get_genre_popularity(keywords, year_start, year_end):
         {year_clause}
         GROUP BY year, {", ".join([f"a.{c}" for c in genre_cols])}
     """, params + [year_start, year_end])
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
     col_names = ["year"] + genre_cols + ["avg_pop"]
     return pd.DataFrame(rows, columns=col_names)
 
