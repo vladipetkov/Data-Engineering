@@ -1,0 +1,12 @@
+streamlit
+requests
+sqlite3
+db
+pandas
+difflib
+calendar
+base64
+pathlib
+plotly
+io
+pulp
