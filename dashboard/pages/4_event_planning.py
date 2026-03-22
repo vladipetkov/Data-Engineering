@@ -1,5 +1,4 @@
 import streamlit as st
-st.logo("supporting/logo.png", size = "large")
 import base64
 import time
 from pathlib import Path
@@ -28,7 +27,8 @@ from lineup_files.festival_analytics_styled import (
     render_solution_comparison_block,
     make_appeal_comparison_chart,
 )
-
+logo_path = Path(__file__).parent.parent / "supporting" / "logo.png"
+st.logo(logo_path, size = "large")
 st.set_page_config(page_title="Festival Dashboard", layout="wide")
 
 BASE_DIR = Path(__file__).resolve().parents[1]
