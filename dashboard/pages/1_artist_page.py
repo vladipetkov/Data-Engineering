@@ -4,9 +4,11 @@ import sqlite3
 from db import get_connection
 import pandas as pd
 from difflib import SequenceMatcher
+from pathlib import Path
 
+logo_path = Path(__file__).parent / "supporting" / "logo.png"
 st.set_page_config(page_title="Artist Lookup", layout="wide")
-st.logo("supporting/logo.png", size = "large")
+st.logo(logo_path, size = "large")
 
 with st.sidebar:
     selectbox_option = st.sidebar.selectbox(
@@ -15,14 +17,17 @@ with st.sidebar:
     index = None,
     placeholder="Look up..."
     )
-
+    
+    1_artist_page_path = Path(__file__).parent / "pages" / "1_artist_page.png"
+    2_album_page_path = Path(__file__).parent / "pages" / "2_album_page.py"
     if selectbox_option == "Look up an Artist":
         st.switch_page("pages/1_artist_page.py")
     elif selectbox_option == "Look up an Album or a Track":
         st.switch_page("pages/2_album_page.py")
 
     st.space(500)
-
+    
+    4_event_planning_path = Path(__file__).parent / "pages" / "4_event_planning.py"
     if st.sidebar.button("Business Tab", type = "primary", width = "stretch"):
         st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
