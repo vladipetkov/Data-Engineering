@@ -18,8 +18,8 @@ with st.sidebar:
     placeholder="Look up..."
     )
     
-    1_artist_page_path = Path(__file__).parent / "1_artist_page.py"
-    2_album_page_path = Path(__file__).parent / "2_album_page.py"
+    artist_page_path = Path(__file__).parent / "1_artist_page.py"
+    album_page_path = Path(__file__).parent / "2_album_page.py"
     if selectbox_option == "Look up an Artist":
         st.switch_page("pages/1_artist_page.py")
     elif selectbox_option == "Look up an Album or a Track":
@@ -27,7 +27,7 @@ with st.sidebar:
 
     st.space(500)
     
-    4_event_planning_path = Path(__file__).parent / "4_event_planning.py"
+    event_planning_path = Path(__file__).parent / "4_event_planning.py"
     if st.sidebar.button("Business Tab", type = "primary", width = "stretch"):
         st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
