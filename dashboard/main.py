@@ -98,6 +98,7 @@ if not use_genre_filter or not selection:
 else:
     keywords = [kw for genre in selection for kw in GENRE_KEYWORDS[genre]]
 
+
 if selectbox_option == "Look up an Artist":
     st.switch_page("pages/1_artist_page.py")
 elif selectbox_option == "Look up an Album or a Track":
