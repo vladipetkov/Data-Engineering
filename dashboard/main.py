@@ -10,13 +10,11 @@ with st.sidebar:
     placeholder="Look up..."
     )
 
-    st.space("xxlarge")
 
-    if st.sidebar.button(
-        label = "Business Tab",
-        type = "primary"
-    ):
+    if st.sidebar.button("Business Tab"):
+        st.session_state["play_event_planning_intro"] = True
         st.switch_page("pages/4_event_planning.py")
+
 
 
 if selectbox_option == "Look up an Artist":
