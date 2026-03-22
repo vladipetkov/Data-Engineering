@@ -12,6 +12,32 @@ st.logo("supporting/logo.png", size = "large")
 conn = get_connection()
 cursor = conn.cursor()
 
+with st.sidebar:
+    use_genre_filter = st.toggle("Filter dashboard on genre")
+
+    if not use_genre_filter:
+        selection = []
+        st.sidebar.caption("Showing all genres")
+
+    st.space("small")
+
+    selectbox_option = st.sidebar.selectbox(
+    "Looking for something specific?",
+    ("Look up an Artist", "Look up an Album or a Track"),
+    index = None,
+    placeholder="Look up..."
+    )
+    if selectbox_option == "Look up an Artist":
+        st.switch_page("pages/1_artist_page.py")
+    elif selectbox_option == "Look up an Album or a Track":
+        st.switch_page("pages/2_album_page.py")
+
+    st.space("stretch")
+
+    if st.sidebar.button("Business Tab"):
+        st.session_state["play_event_planning_intro"] = True
+        st.switch_page("pages/4_event_planning.py")
+
 def similar_names_search(item, similarity_score):
     df = pd.read_sql_query("select distinct a.album_id, a.album_name, b.name from albums_data a join artist_data b on b.id = a.artist_id;", conn, index_col= ['album_id'])
 
@@ -387,55 +413,55 @@ def display_data(album_id, track_id):
             display_track(track_data)
 
        
-# try:
-if "album_name" not in st.session_state:
-    st.session_state.album_name = ""
+try:
+    if "album_name" not in st.session_state:
+        st.session_state.album_name = ""
 
-if "artist_name_album_search" not in st.session_state:
-    st.session_state.artist_name_album_search = ""
+    if "artist_name_album_search" not in st.session_state:
+        st.session_state.artist_name_album_search = ""
 
-if "track_name" not in st.session_state:
-    st.session_state.track_name = ""
+    if "track_name" not in st.session_state:
+        st.session_state.track_name = ""
 
-if "album_id" not in st.session_state:
-    st.session_state.album_id = ""
+    if "album_id" not in st.session_state:
+        st.session_state.album_id = ""
 
-if "track_id" not in st.session_state:
-    st.session_state.track_id = ""
+    if "track_id" not in st.session_state:
+        st.session_state.track_id = ""
 
-if "tracks_df" not in st.session_state:
-    st.session_state["tracks_df"] = None
+    if "tracks_df" not in st.session_state:
+        st.session_state["tracks_df"] = None
 
-col4, col5, col6, col7 = st.columns([3,3,3,1])
-with col4:
-    album_name_input = st.text_input("Album")
-with col5:
-    artist_name_album_search_input = st.text_input("Artist")
-with col6:
-    track_name_input = st.text_input("Track")
-with col7:
-    st.space("small")
-    if st.button("Search", width = "stretch"):
-        if album_name_input != "":
-            st.session_state.album_name = album_name_input
-        elif album_name_input == "":
-            st.session_state.album_name = ""
+    col4, col5, col6, col7 = st.columns([3,3,3,1])
+    with col4:
+        album_name_input = st.text_input("Album")
+    with col5:
+        artist_name_album_search_input = st.text_input("Artist")
+    with col6:
+        track_name_input = st.text_input("Track")
+    with col7:
+        st.space("small")
+        if st.button("Search", width = "stretch"):
+            if album_name_input != "":
+                st.session_state.album_name = album_name_input
+            elif album_name_input == "":
+                st.session_state.album_name = ""
 
-        if artist_name_album_search_input != "":
-            st.session_state.artist_name_album_search = artist_name_album_search_input
-        elif artist_name_album_search_input == "":
-            st.session_state.artist_name_album_search = ""
+            if artist_name_album_search_input != "":
+                st.session_state.artist_name_album_search = artist_name_album_search_input
+            elif artist_name_album_search_input == "":
+                st.session_state.artist_name_album_search = ""
 
-        if track_name_input != "":
-            st.session_state.track_name = track_name_input
-        elif track_name_input == "":
-            st.session_state.track_name = ""
+            if track_name_input != "":
+                st.session_state.track_name = track_name_input
+            elif track_name_input == "":
+                st.session_state.track_name = ""
 
-        st.rerun()
+            st.rerun()
 
-if st.session_state.album_name or st.session_state.artist_name_album_search or st.session_state.track_name:
-    search_engine(st.session_state.album_name, st.session_state.artist_name_album_search, st.session_state.track_name)
-elif st.session_state.album_id:
-    display_data(st.session_state.album_id, st.session_state.track_id)
-# except:
-#     st.error("There seems to be an unexpected error!")
+    if st.session_state.album_name or st.session_state.artist_name_album_search or st.session_state.track_name:
+        search_engine(st.session_state.album_name, st.session_state.artist_name_album_search, st.session_state.track_name)
+    elif st.session_state.album_id:
+        display_data(st.session_state.album_id, st.session_state.track_id)
+except:
+    st.error("There seems to be an unexpected error!")
