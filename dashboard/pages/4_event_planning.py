@@ -339,6 +339,19 @@ def apply_new_dashboard_style():
         hr {{
             border-color: rgba(255,255,255,0.25);
         }}
+
+        [data-testid="stHeader"] {{
+            background: linear-gradient(135deg, #ff2f5f 0%, #ef336a 100%) !important;
+            border-bottom: 4px solid var(--sz-yellow);
+        }}
+
+        [data-testid="stToolbar"] {{
+            background: transparent !important;
+        }}
+
+        [data-testid="stDecoration"] {{
+            display: none;
+        }}
         </style>
         ''',
         unsafe_allow_html=True,
