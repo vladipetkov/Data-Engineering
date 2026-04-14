@@ -14,6 +14,7 @@ This repository contains a dashboard for a spotify database and some additional 
 
 # Sidebar features
 The sidebar acts as an easy to navigate menu for switching between looking something up, to the main statistics, to the business tab
+- Logo: You can easily return to the main page by clicking on the app logo
 - Genre Filtering: Toggle filtering on/off and select specific genres to update the dashboard
 - Lookup: type in an Artist, Album or Track to learn more
 - Business Tab: Navigates to the Festival tab
